@@ -1,0 +1,34 @@
+{
+  "name": "syntactic-sugar",
+  "version": "0.0.1",
+  "description": "Website for syntacticsugar.consulting",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "webpack-dev-server --mode development --open",
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2opremio/ssweb.git"
+  },
+  "author": "Alfonso Acosta, Wilhelm Wanecek",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/2opremio/ssweb/issues"
+  },
+  "homepage": "https://syntacticsugar.consulting",
+  "devDependencies": {
+    "autoprefixer": "^8.2.0",
+    "css-loader": "^0.28.11",
+    "cssnano": "^3.10.0",
+    "file-loader": "^1.1.11",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.1.0",
+    "mini-css-extract-plugin": "^0.4.0",
+    "postcss-loader": "^2.1.3",
+    "webpack": "^4.4.1",
+    "webpack-cli": "^2.0.13",
+    "webpack-dev-server": "^3.1.1"
+  }
+}
