@@ -306,10 +306,6 @@ THREE.ClearMaskPass.prototype = {
  * DEMO SCRIPT
  */
 
-//Bad TV Shader Demo
-//Using Three.js r.75
-//by Felix Turner / www.airtight.cc / @felixturner
-
 var camera, scene, renderer;
 var video, videoTexture, videoMaterial;
 var composer;
@@ -333,25 +329,6 @@ function init() {
   video.loop = true;
   video.src = require('./res/fits.mp4');
   video.play();
-
-  //Use webcam
-  // video = document.createElement('video');
-  // video.width = 320;
-  // video.height = 240;
-  // video.autoplay = true;
-  // video.loop = true;
-  // //Webcam video
-  // window.URL = window.URL || window.webkitURL;
-  // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-  // //get webcam
-  // navigator.getUserMedia({
-  // 	video: true
-  // }, function(stream) {
-  // 	//on webcam enabled
-  // 	video.src = window.URL.createObjectURL(stream);
-  // }, function(error) {
-  // 	prompt.innerHTML = 'Unable to capture WebCam. Please reload the page.';
-  // });
 
   //init video texture
   videoTexture = new THREE.Texture(video);
@@ -383,7 +360,6 @@ function init() {
   //set shader uniforms
   filmPass.uniforms.grayscale.value = 0;
 
-  //Init DAT GUI control panel
   badTVParams = {
     distortion: 0.0,
     distortion2: 0.0,
