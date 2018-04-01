@@ -162,3 +162,14 @@ main {
   height: 2em;
   width: auto;
 }
+
+
+
+
+
+
+canvas {
+  top: 0;
+  left: 0;
+  position: absolute;
+}

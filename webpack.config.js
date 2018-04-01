@@ -31,7 +31,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(woff|woff2)$/,
+        test: /\.(woff|woff2|mp4)$/,
         use: [
           {
             loader: 'file-loader',
