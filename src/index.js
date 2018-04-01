@@ -308,10 +308,7 @@ var camera, scene, renderer;
 var video, videoTexture, videoMaterial;
 var composer;
 var shaderTime = 0;
-var badTVParams, badTVPass;
-var filmParams, filmPass;
-var renderPass, copyPass;
-var pnoise, globalParams;
+var badTVPass, filmPass, renderPass, copyPass;
 
 function addShaderPasses() {
   // Add Shader passes to Composer, order is important
@@ -326,21 +323,24 @@ function addShaderPasses() {
 }
 
 function onResize() {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.aspect = window.innerWidth / window.innerHeight;
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  renderer.setSize(width, height);
+  camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }
 
 // Copy GUI params into shader uniforms
-function onParamsChange() {
-  badTVPass.uniforms.distortion.value = badTVParams.distortion;
-  badTVPass.uniforms.distortion2.value = badTVParams.distortion2;
-  badTVPass.uniforms.speed.value = badTVParams.speed;
-  badTVPass.uniforms.rollSpeed.value = badTVParams.rollSpeed;
+function configurePassesUniforms() {
+  badTVPass.uniforms.distortion.value = 0.75;
+  badTVPass.uniforms.distortion2.value = 1;
+  badTVPass.uniforms.speed.value = 0.05;
+  badTVPass.uniforms.rollSpeed.value = 0;
 
-  filmPass.uniforms.sCount.value = filmParams.count;
-  filmPass.uniforms.sIntensity.value = filmParams.sIntensity;
-  filmPass.uniforms.nIntensity.value = filmParams.nIntensity;
+  filmPass.uniforms.sCount.value = 625;
+  filmPass.uniforms.sIntensity.value = 0.75;
+  filmPass.uniforms.nIntensity.value = 1.25;
 }
 
 function init() {
@@ -383,21 +383,8 @@ function init() {
   // set shader uniforms
   filmPass.uniforms.grayscale.value = 0;
 
-  badTVParams = {
-    distortion: 0.75,
-    distortion2: 1,
-    speed: 0.05,
-    rollSpeed: 0,
-  };
-
-  filmParams = {
-    count: 625,
-    sIntensity: 0.75,
-    nIntensity: 1.25,
-  };
-
   addShaderPasses();
-  onParamsChange();
+  configurePassesUniforms();
 
   window.addEventListener('resize', onResize, false);
   onResize();
