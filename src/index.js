@@ -2,12 +2,10 @@ import './main.css';
 
 const THREE = require('three');
 import CopyShader from './lib/shaders/CopyShader';
-import FilmShader from './lib/shaders/FilmShader';
 import BadTVShader from './lib/BadTVShader';
 import StaticShader from './lib/StaticShader';
 
 THREE.CopyShader = CopyShader;
-THREE.FilmShader = FilmShader;
 THREE.BadTVShader = BadTVShader;
 THREE.StaticShader = StaticShader;
 
@@ -312,7 +310,6 @@ var composer;
 var shaderTime = 0;
 var badTVParams, badTVPass;
 var staticParams, staticPass;
-var filmParams, filmPass;
 var renderPass, copyPass;
 var pnoise, globalParams;
 
@@ -353,13 +350,10 @@ function init() {
   //Create Shader Passes
   renderPass = new THREE.RenderPass(scene, camera);
   badTVPass = new THREE.ShaderPass(THREE.BadTVShader);
-  filmPass = new THREE.ShaderPass(THREE.FilmShader);
   staticPass = new THREE.ShaderPass(THREE.StaticShader);
   copyPass = new THREE.ShaderPass(THREE.CopyShader);
 
   //set shader uniforms
-  filmPass.uniforms.grayscale.value = 0;
-
   badTVParams = {
     distortion: 0.0,
     distortion2: 0.0,
@@ -370,12 +364,6 @@ function init() {
   staticParams = {
     amount: 0.5,
     size: 1.0,
-  };
-
-  filmParams = {
-    count: 800,
-    sIntensity: 0.9,
-    nIntensity: 0.4,
   };
 
   onToggleShaders();
@@ -394,10 +382,6 @@ function onParamsChange() {
 
   staticPass.uniforms['amount'].value = staticParams.amount;
   staticPass.uniforms['size'].value = staticParams.size;
-
-  filmPass.uniforms['sCount'].value = filmParams.count;
-  filmPass.uniforms['sIntensity'].value = filmParams.sIntensity;
-  filmPass.uniforms['nIntensity'].value = filmParams.nIntensity;
 }
 
 function onToggleShaders() {
@@ -406,7 +390,6 @@ function onToggleShaders() {
   composer = new THREE.EffectComposer(renderer);
   composer.addPass(renderPass);
 
-  composer.addPass(filmPass);
   composer.addPass(badTVPass);
   composer.addPass(staticPass);
 
@@ -417,7 +400,6 @@ function onToggleShaders() {
 function animate() {
   shaderTime += 0.1;
   badTVPass.uniforms['time'].value = shaderTime;
-  filmPass.uniforms['time'].value = shaderTime;
   staticPass.uniforms['time'].value = shaderTime;
 
   if (video.readyState === video.HAVE_ENOUGH_DATA) {
