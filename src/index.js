@@ -4,12 +4,10 @@ const THREE = require('three');
 import CopyShader from './lib/shaders/CopyShader';
 import FilmShader from './lib/shaders/FilmShader';
 import BadTVShader from './lib/shaders/BadTVShader';
-import StaticShader from './lib/shaders/StaticShader';
 
 THREE.CopyShader = CopyShader;
 THREE.FilmShader = FilmShader;
 THREE.BadTVShader = BadTVShader;
-THREE.StaticShader = StaticShader;
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -311,7 +309,6 @@ var video, videoTexture, videoMaterial;
 var composer;
 var shaderTime = 0;
 var badTVParams, badTVPass;
-var staticParams, staticPass;
 var filmParams, filmPass;
 var renderPass, copyPass;
 var pnoise, globalParams;
@@ -323,7 +320,6 @@ function addShaderPasses() {
 
   composer.addPass(filmPass);
   composer.addPass(badTVPass);
-  composer.addPass(staticPass);
 
   composer.addPass(copyPass);
   copyPass.renderToScreen = true;
@@ -341,9 +337,6 @@ function onParamsChange() {
   badTVPass.uniforms.distortion2.value = badTVParams.distortion2;
   badTVPass.uniforms.speed.value = badTVParams.speed;
   badTVPass.uniforms.rollSpeed.value = badTVParams.rollSpeed;
-
-  staticPass.uniforms.amount.value = staticParams.amount;
-  staticPass.uniforms.size.value = staticParams.size;
 
   filmPass.uniforms.sCount.value = filmParams.count;
   filmPass.uniforms.sIntensity.value = filmParams.sIntensity;
@@ -385,7 +378,6 @@ function init() {
   renderPass = new THREE.RenderPass(scene, camera);
   badTVPass = new THREE.ShaderPass(THREE.BadTVShader);
   filmPass = new THREE.ShaderPass(THREE.FilmShader);
-  staticPass = new THREE.ShaderPass(THREE.StaticShader);
   copyPass = new THREE.ShaderPass(THREE.CopyShader);
 
   // set shader uniforms
@@ -398,13 +390,8 @@ function init() {
     rollSpeed: 0,
   };
 
-  staticParams = {
-    amount: 0.5,
-    size: 1.0,
-  };
-
   filmParams = {
-    count: 600,
+    count: 625,
     sIntensity: 0.75,
     nIntensity: 1.25,
   };
@@ -419,9 +406,8 @@ function init() {
 function animate() {
   shaderTime += 0.1;
 
-  [badTVPass, filmPass, staticPass].forEach(function(shader) {
-    shader.uniforms.time.value = shaderTime;
-  });
+  badTVPass.uniforms.time.value = shaderTime;
+  filmPass.uniforms.time.value = shaderTime;
 
   if (video.readyState === video.HAVE_ENOUGH_DATA) {
     if (videoTexture) videoTexture.needsUpdate = true;
