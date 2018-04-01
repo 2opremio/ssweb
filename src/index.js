@@ -2,8 +2,8 @@ import './main.css';
 
 const THREE = require('three');
 import CopyShader from './lib/shaders/CopyShader';
-import BadTVShader from './lib/BadTVShader';
-import StaticShader from './lib/StaticShader';
+import BadTVShader from './lib/shaders/BadTVShader';
+import StaticShader from './lib/shaders/StaticShader';
 
 THREE.CopyShader = CopyShader;
 THREE.BadTVShader = BadTVShader;
@@ -313,80 +313,9 @@ var staticParams, staticPass;
 var renderPass, copyPass;
 var pnoise, globalParams;
 
-init();
-animate();
 
-function init() {
-  camera = new THREE.PerspectiveCamera(55, 1080 / 720, 20, 3000);
-  camera.position.z = 1000;
-  scene = new THREE.Scene();
-
-  //Load Video
-  video = document.createElement('video');
-  video.loop = true;
-  video.src = require('./res/fits.mp4');
-  video.play();
-
-  //init video texture
-  videoTexture = new THREE.Texture(video);
-  videoTexture.minFilter = THREE.LinearFilter;
-  videoTexture.magFilter = THREE.LinearFilter;
-
-  videoMaterial = new THREE.MeshBasicMaterial({ map: videoTexture });
-
-  //Add video plane
-  var planeGeometry = new THREE.PlaneGeometry(1080, 720, 1, 1);
-  var plane = new THREE.Mesh(planeGeometry, videoMaterial);
-  scene.add(plane);
-  plane.z = 0;
-  plane.scale.x = plane.scale.y = 1.45;
-
-  //init renderer
-  renderer = new THREE.WebGLRenderer();
-  renderer.setSize(800, 600);
-  document.body.appendChild(renderer.domElement);
-
-  //POST PROCESSING
-  //Create Shader Passes
-  renderPass = new THREE.RenderPass(scene, camera);
-  badTVPass = new THREE.ShaderPass(THREE.BadTVShader);
-  staticPass = new THREE.ShaderPass(THREE.StaticShader);
-  copyPass = new THREE.ShaderPass(THREE.CopyShader);
-
-  //set shader uniforms
-  badTVParams = {
-    distortion: 0.0,
-    distortion2: 0.0,
-    speed: 0.3,
-    rollSpeed: 0,
-  };
-
-  staticParams = {
-    amount: 0.5,
-    size: 1.0,
-  };
-
-  onToggleShaders();
-  onParamsChange();
-
-  window.addEventListener('resize', onResize, false);
-  onResize();
-}
-
-function onParamsChange() {
-  //copy gui params into shader uniforms
-  badTVPass.uniforms['distortion'].value = badTVParams.distortion;
-  badTVPass.uniforms['distortion2'].value = badTVParams.distortion2;
-  badTVPass.uniforms['speed'].value = badTVParams.speed;
-  badTVPass.uniforms['rollSpeed'].value = badTVParams.rollSpeed;
-
-  staticPass.uniforms['amount'].value = staticParams.amount;
-  staticPass.uniforms['size'].value = staticParams.size;
-}
-
-function onToggleShaders() {
-  //Add Shader Passes to Composer
-  //order is important
+function addShaderPasses() {
+  // Add Shader passes to Composer, order is important
   composer = new THREE.EffectComposer(renderer);
   composer.addPass(renderPass);
 
@@ -397,10 +326,84 @@ function onToggleShaders() {
   copyPass.renderToScreen = true;
 }
 
+function onResize() {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+
+// Copy GUI params into shader uniforms
+function onParamsChange() {
+  badTVPass.uniforms.distortion.value = badTVParams.distortion;
+  badTVPass.uniforms.distortion2.value = badTVParams.distortion2;
+  badTVPass.uniforms.speed.value = badTVParams.speed;
+  badTVPass.uniforms.rollSpeed.value = badTVParams.rollSpeed;
+
+  staticPass.uniforms.amount.value = staticParams.amount;
+  staticPass.uniforms.size.value = staticParams.size;
+}
+
+function init() {
+  camera = new THREE.PerspectiveCamera(55, 1080 / 720, 20, 3000);
+  camera.position.z = 1000;
+  scene = new THREE.Scene();
+
+  // Load Video
+  video = document.createElement('video');
+  video.loop = true;
+  video.src = require('./res/fits.mp4');
+  video.play();
+
+  // init video texture
+  videoTexture = new THREE.Texture(video);
+  videoTexture.minFilter = THREE.LinearFilter;
+  videoTexture.magFilter = THREE.LinearFilter;
+
+  videoMaterial = new THREE.MeshBasicMaterial({ map: videoTexture });
+
+  // Add video plane
+  var planeGeometry = new THREE.PlaneGeometry(1080, 720, 1, 1);
+  var plane = new THREE.Mesh(planeGeometry, videoMaterial);
+  scene.add(plane);
+  plane.z = 0;
+  plane.scale.x = plane.scale.y = 1.45;
+
+  // init renderer
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(800, 600);
+  document.body.appendChild(renderer.domElement);
+
+  // POST PROCESSING
+  // Create Shader Passes
+  renderPass = new THREE.RenderPass(scene, camera);
+  badTVPass = new THREE.ShaderPass(THREE.BadTVShader);
+  staticPass = new THREE.ShaderPass(THREE.StaticShader);
+  copyPass = new THREE.ShaderPass(THREE.CopyShader);
+
+  // set shader uniforms
+  badTVParams = {
+    distortion: 0.75,
+    distortion2: 1,
+    speed: 0.05,
+    rollSpeed: 0,
+  };
+
+  staticParams = {
+    amount: 0.5,
+    size: 1.0,
+  };
+
+  addShaderPasses();
+  onParamsChange();
+
+  window.addEventListener('resize', onResize, false);
+  onResize();
+}
+
 function animate() {
   shaderTime += 0.1;
-  badTVPass.uniforms['time'].value = shaderTime;
-  staticPass.uniforms['time'].value = shaderTime;
+  badTVPass.uniforms.time.value = shaderTime;
+  staticPass.uniforms.time.value = shaderTime;
 
   if (video.readyState === video.HAVE_ENOUGH_DATA) {
     if (videoTexture) videoTexture.needsUpdate = true;
@@ -410,8 +413,6 @@ function animate() {
   composer.render(0.1);
 }
 
-function onResize() {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-}
+init();
+animate();
+
