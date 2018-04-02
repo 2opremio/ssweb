@@ -1,4 +1,3 @@
-// @ts-check
 import './main.css';
 
 import * as THREE from 'three';
@@ -218,27 +217,66 @@ ShaderPass.prototype = {
   },
 };
 
-var camera, scene, renderer;
 var composer;
-var shaderTime = 0;
+var plane;
 var badTVPass, filmPass, renderPass, copyPass;
 
-var BACKGROUND_COLOR = 0x222222;
+var BACKGROUND_COLOR = 0x1a1a1a;
+var DISTANCE = 1200;
+var FOV = 45;
+var NEAR = 20;
+var FAR = 3000;
 
-function addShaderPasses() {
+function init() {
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  var aspectRatio = width / height;
+
+  var camera = new THREE.PerspectiveCamera(FOV, aspectRatio, NEAR, FAR);
+  camera.position.z = DISTANCE;
+
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(BACKGROUND_COLOR);
+
+  // Load image
+  var imageUrl = require('./res/test2.png');
+
+  var imageTexture = new THREE.TextureLoader().load(imageUrl);
+  var imageMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
+  imageMaterial.transparent = true;
+  imageMaterial.depthWrite = false;
+
+  // Add image plane
+
+  var planeSize = Math.max(width, height);
+  var planeGeometry = new THREE.PlaneGeometry(planeSize, planeSize, 1, 1);
+  plane = new THREE.Mesh(planeGeometry, imageMaterial);
+  plane.scale.x = 1;
+  plane.scale.y = 1;
+  scene.add(plane);
+
+  // Init renderer
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(width, height);
+  document.body.appendChild(renderer.domElement);
+
+  // POST PROCESSING
+
+  // Create Shader Passes
+  renderPass = new RenderPass(scene, camera);
+  badTVPass = new ShaderPass(BadTVShader);
+  filmPass = new ShaderPass(FilmShader);
+  copyPass = new ShaderPass(CopyShader);
+
   // Add Shader passes to Composer, order is important
   composer = new EffectComposer(renderer);
   composer.addPass(renderPass);
-
   composer.addPass(filmPass);
   composer.addPass(badTVPass);
-
   composer.addPass(copyPass);
   copyPass.renderToScreen = true;
-}
 
-// Copy GUI params into shader uniforms
-function configurePassesUniforms() {
+  // Configure uniforms for aesthetics
   badTVPass.uniforms.distortion.value = 0.75;
   badTVPass.uniforms.distortion2.value = 1;
   badTVPass.uniforms.speed.value = 0.05;
@@ -247,59 +285,27 @@ function configurePassesUniforms() {
   filmPass.uniforms.sCount.value = 625;
   filmPass.uniforms.sIntensity.value = 0.75;
   filmPass.uniforms.nIntensity.value = 1.25;
-}
-
-function onResize() {
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-
-  renderer.setSize(width, height);
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-}
-
-function init() {
-  camera = new THREE.PerspectiveCamera(55, 1080 / 720, 20, 3000);
-  camera.position.z = 1000;
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(BACKGROUND_COLOR);
-
-  // Load image
-  var imageUrl = require('./res/test.png');
-
-  var imageTexture = new THREE.TextureLoader().load(imageUrl);
-  var imageMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
-
-  // Add video plane
-  var planeGeometry = new THREE.PlaneGeometry(1080, 720, 1, 1);
-  var plane = new THREE.Mesh(planeGeometry, imageMaterial);
-  plane.scale.z = 0;
-  plane.scale.x = 1.45;
-  plane.scale.y = 1.45;
-  scene.add(plane);
-
-  // init renderer
-  renderer = new THREE.WebGLRenderer();
-  renderer.setSize(800, 600);
-  document.body.appendChild(renderer.domElement);
-
-  // POST PROCESSING
-  // Create Shader Passes
-  renderPass = new RenderPass(scene, camera);
-  badTVPass = new ShaderPass(BadTVShader);
-  filmPass = new ShaderPass(FilmShader);
-  copyPass = new ShaderPass(CopyShader);
-
-  // set shader uniforms
   filmPass.uniforms.grayscale.value = 0;
 
-  addShaderPasses();
-  configurePassesUniforms();
+  window.addEventListener(
+    'resize',
+    function onResize() {
+      var width = window.innerWidth;
+      var height = window.innerHeight;
 
-  window.addEventListener('resize', onResize, false);
-  onResize();
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      var newPlaneSize = Math.max(width, height);
+      plane.scale.x = newPlaneSize / planeSize;
+      plane.scale.y = newPlaneSize / planeSize;
+    },
+    false
+  );
 }
 
+var shaderTime = 0;
 function animate() {
   shaderTime += 0.1;
 
