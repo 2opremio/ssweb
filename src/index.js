@@ -1,18 +1,14 @@
 import './main.css';
 
-const THREE = require('three');
+import * as THREE from 'three';
 import CopyShader from './lib/shaders/CopyShader';
 import FilmShader from './lib/shaders/FilmShader';
 import BadTVShader from './lib/shaders/BadTVShader';
 
-THREE.CopyShader = CopyShader;
-THREE.FilmShader = FilmShader;
-THREE.BadTVShader = BadTVShader;
-
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-THREE.EffectComposer = function(renderer, renderTarget) {
+var EffectComposer = function(renderer, renderTarget) {
   this.renderer = renderer;
 
   if (renderTarget === undefined) {
@@ -38,13 +34,10 @@ THREE.EffectComposer = function(renderer, renderTarget) {
 
   this.passes = [];
 
-  if (THREE.CopyShader === undefined)
-    console.error('THREE.EffectComposer relies on THREE.CopyShader');
-
-  this.copyPass = new THREE.ShaderPass(THREE.CopyShader);
+  this.copyPass = new ShaderPass(CopyShader);
 };
 
-THREE.EffectComposer.prototype = {
+EffectComposer.prototype = {
   swapBuffers: function() {
     var tmp = this.readBuffer;
     this.readBuffer = this.writeBuffer;
@@ -101,9 +94,9 @@ THREE.EffectComposer.prototype = {
         this.swapBuffers();
       }
 
-      if (pass instanceof THREE.MaskPass) {
+      if (pass instanceof MaskPass) {
         maskActive = true;
-      } else if (pass instanceof THREE.ClearMaskPass) {
+      } else if (pass instanceof ClearMaskPass) {
         maskActive = false;
       }
     }
@@ -135,7 +128,7 @@ THREE.EffectComposer.prototype = {
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-THREE.RenderPass = function(
+var RenderPass = function(
   scene,
   camera,
   overrideMaterial,
@@ -158,7 +151,7 @@ THREE.RenderPass = function(
   this.needsSwap = false;
 };
 
-THREE.RenderPass.prototype = {
+RenderPass.prototype = {
   render: function(renderer, writeBuffer, readBuffer, delta) {
     this.scene.overrideMaterial = this.overrideMaterial;
 
@@ -183,7 +176,7 @@ THREE.RenderPass.prototype = {
  * @author alteredq / http://alteredqualia.com/
  */
 
-THREE.ShaderPass = function(shader, textureID) {
+var ShaderPass = function(shader, textureID) {
   this.textureID = textureID !== undefined ? textureID : 'tDiffuse';
 
   if (shader instanceof THREE.ShaderMaterial) {
@@ -214,7 +207,7 @@ THREE.ShaderPass = function(shader, textureID) {
   this.scene.add(this.quad);
 };
 
-THREE.ShaderPass.prototype = {
+ShaderPass.prototype = {
   render: function(renderer, writeBuffer, readBuffer, delta) {
     if (this.uniforms[this.textureID]) {
       this.uniforms[this.textureID].value = readBuffer;
@@ -234,7 +227,7 @@ THREE.ShaderPass.prototype = {
  * @author alteredq / http://alteredqualia.com/
  */
 
-THREE.MaskPass = function(scene, camera) {
+var MaskPass = function(scene, camera) {
   this.scene = scene;
   this.camera = camera;
 
@@ -245,7 +238,7 @@ THREE.MaskPass = function(scene, camera) {
   this.inverse = false;
 };
 
-THREE.MaskPass.prototype = {
+MaskPass.prototype = {
   render: function(renderer, writeBuffer, readBuffer, delta) {
     var context = renderer.context;
 
@@ -288,11 +281,11 @@ THREE.MaskPass.prototype = {
   },
 };
 
-THREE.ClearMaskPass = function() {
+var ClearMaskPass = function() {
   this.enabled = true;
 };
 
-THREE.ClearMaskPass.prototype = {
+ClearMaskPass.prototype = {
   render: function(renderer, writeBuffer, readBuffer, delta) {
     var context = renderer.context;
 
@@ -312,7 +305,7 @@ var badTVPass, filmPass, renderPass, copyPass;
 
 function addShaderPasses() {
   // Add Shader passes to Composer, order is important
-  composer = new THREE.EffectComposer(renderer);
+  composer = new EffectComposer(renderer);
   composer.addPass(renderPass);
 
   composer.addPass(filmPass);
@@ -375,10 +368,10 @@ function init() {
 
   // POST PROCESSING
   // Create Shader Passes
-  renderPass = new THREE.RenderPass(scene, camera);
-  badTVPass = new THREE.ShaderPass(THREE.BadTVShader);
-  filmPass = new THREE.ShaderPass(THREE.FilmShader);
-  copyPass = new THREE.ShaderPass(THREE.CopyShader);
+  renderPass = new RenderPass(scene, camera);
+  badTVPass = new ShaderPass(BadTVShader);
+  filmPass = new ShaderPass(FilmShader);
+  copyPass = new ShaderPass(CopyShader);
 
   // set shader uniforms
   filmPass.uniforms.grayscale.value = 0;
