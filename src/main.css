@@ -86,23 +86,31 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 3em;
-  color: rgba(255, 255, 255, 1);
-  margin-bottom: 0.5rem;
+  font-size: calc(1.25em + 1.75vw);
+  margin-bottom: 0.25em;
 }
 
 h2, h3 {
   font-size: 1.75em;
+  font-size: calc(1em + 0.65vw);
 }
 
 h2 {
-  margin-bottom: 3rem;
+  margin-bottom: 1.75em;
 }
 
 h4 {
   font-size: 1.25em;
-  margin-top: 3rem;
-  margin-bottom: 2rem;
+  font-size: calc(0.875em + 0.35vw);
+  margin-top: 2.5em;
+  margin-bottom: 1.5em;
   text-transform: uppercase;
+}
+
+@media only screen and (max-width: 40em) {
+  h4 {
+    margin-bottom: 1rem;
+  }
 }
 
 .backdrop {
@@ -161,6 +169,17 @@ main {
 .client svg {
   height: 2em;
   width: auto;
+}
+
+@media only screen and (max-width: 40em) {
+  .client {
+    margin-right: 1em;
+    margin-bottom: 1.5rem;
+  }
+
+  .client svg {
+    height: 1.5em;
+  }
 }
 
 
