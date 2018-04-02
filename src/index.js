@@ -1,3 +1,4 @@
+// @ts-check
 import './main.css';
 
 import * as THREE from 'three';
@@ -217,42 +218,40 @@ ShaderPass.prototype = {
   },
 };
 
-var composer;
-var plane;
-var badTVPass, filmPass, renderPass, copyPass;
-
 var BACKGROUND_COLOR = 0x1a1a1a;
-var DISTANCE = 1200;
-var FOV = 45;
-var NEAR = 20;
-var FAR = 3000;
+var NEAR = 0;
+var FAR = 2000;
+var IMAGE_SCREEN_FRACTION = 0.92; // Matches width of text-overlay
 
 function init() {
   var width = window.innerWidth;
   var height = window.innerHeight;
   var aspectRatio = width / height;
 
-  var camera = new THREE.PerspectiveCamera(FOV, aspectRatio, NEAR, FAR);
-  camera.position.z = DISTANCE;
+  var camera = new THREE.OrthographicCamera(
+    width / -2, // left
+    width / 2, // right
+    height / 2, // top
+    height / -2, // bottom
+    NEAR,
+    FAR
+  );
 
   var scene = new THREE.Scene();
   scene.background = new THREE.Color(BACKGROUND_COLOR);
 
-  // Load image
-  var imageUrl = require('./res/test2.png');
-
+  // Create material from image
+  var imageUrl = require('./res/grid.png');
   var imageTexture = new THREE.TextureLoader().load(imageUrl);
   var imageMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
   imageMaterial.transparent = true;
   imageMaterial.depthWrite = false;
 
-  // Add image plane
-
-  var planeSize = Math.max(width, height);
-  var planeGeometry = new THREE.PlaneGeometry(planeSize, planeSize, 1, 1);
-  plane = new THREE.Mesh(planeGeometry, imageMaterial);
-  plane.scale.x = 1;
-  plane.scale.y = 1;
+  // Create plane and add it to the screne
+  var planeWidth = IMAGE_SCREEN_FRACTION * width;
+  var planeHeight = IMAGE_SCREEN_FRACTION * height * aspectRatio; // multipled by aR to maintain proportions
+  var planeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight, 1, 1);
+  var plane = new THREE.Mesh(planeGeometry, imageMaterial);
   scene.add(plane);
 
   // Init renderer
@@ -262,21 +261,21 @@ function init() {
 
   // POST PROCESSING
 
-  // Create Shader Passes
-  renderPass = new RenderPass(scene, camera);
-  badTVPass = new ShaderPass(BadTVShader);
-  filmPass = new ShaderPass(FilmShader);
-  copyPass = new ShaderPass(CopyShader);
+  // Create Shader passes
+  var renderPass = new RenderPass(scene, camera);
+  var badTVPass = new ShaderPass(BadTVShader);
+  var filmPass = new ShaderPass(FilmShader);
+  var copyPass = new ShaderPass(CopyShader);
 
-  // Add Shader passes to Composer, order is important
-  composer = new EffectComposer(renderer);
+  // Add Shader passes to Composer. Order is important.
+  var composer = new EffectComposer(renderer);
   composer.addPass(renderPass);
   composer.addPass(filmPass);
   composer.addPass(badTVPass);
   composer.addPass(copyPass);
   copyPass.renderToScreen = true;
 
-  // Configure uniforms for aesthetics
+  // Configure uniforms to match aesthetics
   badTVPass.uniforms.distortion.value = 0.75;
   badTVPass.uniforms.distortion2.value = 1;
   badTVPass.uniforms.speed.value = 0.05;
@@ -294,27 +293,36 @@ function init() {
       var height = window.innerHeight;
 
       renderer.setSize(width, height);
-      camera.aspect = width / height;
+      // camera.aspect = width / height;
       camera.updateProjectionMatrix();
-
-      var newPlaneSize = Math.max(width, height);
-      plane.scale.x = newPlaneSize / planeSize;
-      plane.scale.y = newPlaneSize / planeSize;
     },
     false
   );
-}
 
-var shaderTime = 0;
-function animate() {
-  shaderTime += 0.1;
+  var shaderTime = 0;
+  function animate() {
+    shaderTime += 0.1;
 
-  badTVPass.uniforms.time.value = shaderTime;
-  filmPass.uniforms.time.value = shaderTime;
+    badTVPass.uniforms.time.value = shaderTime;
+    filmPass.uniforms.time.value = shaderTime;
 
-  requestAnimationFrame(animate);
-  composer.render(0.1);
+    requestAnimationFrame(animate);
+    composer.render(0.1);
+  }
+
+  animate();
 }
 
 init();
-animate();
+
+/*
+
+Remaining tasks:
+  1. Resize or redraw plane when viewport resizes
+  2. Align plane to top of screen (or align camera to top of plane.)
+
+Extra:
+  1. Debug why tree-shaking doesn't seem to work (and we hence serve a 540kB bundle...)
+  2. Load JS async
+
+*/
