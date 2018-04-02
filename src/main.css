@@ -1,5 +1,5 @@
 @font-face {
-  font-family: 'Default';
+  font-family: 'OmType';
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -61,7 +61,7 @@ html {
   /* 2 */
   position: relative;
   line-height: 1.15;
-  font-family: 'Default', monospace;
+  font-family: 'OmType', monospace;
   color: #fff;
 }
 
@@ -76,7 +76,7 @@ a:active {
 
 h1, h2, h3, h4, h5, h6 {
   color: #fff;
-  font-family: 'Default', monospace;
+  font-family: 'OmType', monospace;
   font-style: normal;
   font-weight: 400;
   padding: 0;
