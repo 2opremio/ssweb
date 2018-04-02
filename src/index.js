@@ -1,3 +1,4 @@
+// @ts-check
 import './main.css';
 
 import * as THREE from 'three';
@@ -93,7 +94,6 @@ EffectComposer.prototype = {
 
         this.swapBuffers();
       }
-
     }
   },
 
@@ -219,10 +219,11 @@ ShaderPass.prototype = {
 };
 
 var camera, scene, renderer;
-var video, videoTexture, videoMaterial;
 var composer;
 var shaderTime = 0;
 var badTVPass, filmPass, renderPass, copyPass;
+
+var BACKGROUND_COLOR = 0x222222;
 
 function addShaderPasses() {
   // Add Shader passes to Composer, order is important
@@ -234,15 +235,6 @@ function addShaderPasses() {
 
   composer.addPass(copyPass);
   copyPass.renderToScreen = true;
-}
-
-function onResize() {
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-
-  renderer.setSize(width, height);
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
 }
 
 // Copy GUI params into shader uniforms
@@ -257,30 +249,34 @@ function configurePassesUniforms() {
   filmPass.uniforms.nIntensity.value = 1.25;
 }
 
+function onResize() {
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  renderer.setSize(width, height);
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+}
+
 function init() {
   camera = new THREE.PerspectiveCamera(55, 1080 / 720, 20, 3000);
   camera.position.z = 1000;
   scene = new THREE.Scene();
+  scene.background = new THREE.Color(BACKGROUND_COLOR);
 
-  // Load Video
-  video = document.createElement('video');
-  video.loop = true;
-  video.src = require('./res/fits.mp4');
-  video.play();
+  // Load image
+  var imageUrl = require('./res/test.png');
 
-  // init video texture
-  videoTexture = new THREE.Texture(video);
-  videoTexture.minFilter = THREE.LinearFilter;
-  videoTexture.magFilter = THREE.LinearFilter;
-
-  videoMaterial = new THREE.MeshBasicMaterial({ map: videoTexture });
+  var imageTexture = new THREE.TextureLoader().load(imageUrl);
+  var imageMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
 
   // Add video plane
   var planeGeometry = new THREE.PlaneGeometry(1080, 720, 1, 1);
-  var plane = new THREE.Mesh(planeGeometry, videoMaterial);
+  var plane = new THREE.Mesh(planeGeometry, imageMaterial);
+  plane.scale.z = 0;
+  plane.scale.x = 1.45;
+  plane.scale.y = 1.45;
   scene.add(plane);
-  plane.z = 0;
-  plane.scale.x = plane.scale.y = 1.45;
 
   // init renderer
   renderer = new THREE.WebGLRenderer();
@@ -309,10 +305,6 @@ function animate() {
 
   badTVPass.uniforms.time.value = shaderTime;
   filmPass.uniforms.time.value = shaderTime;
-
-  if (video.readyState === video.HAVE_ENOUGH_DATA) {
-    if (videoTexture) videoTexture.needsUpdate = true;
-  }
 
   requestAnimationFrame(animate);
   composer.render(0.1);
