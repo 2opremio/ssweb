@@ -222,6 +222,7 @@ var BACKGROUND_COLOR = 0x1a1a1a;
 var NEAR = 0;
 var FAR = 2000;
 var IMAGE_SCREEN_FRACTION = 0.92; // Matches width of text-overlay
+var IMAGE_ASPECT_RATIO = 1;
 
 function init() {
   var width = window.innerWidth;
@@ -249,9 +250,10 @@ function init() {
 
   // Create plane and add it to the screne
   var planeWidth = IMAGE_SCREEN_FRACTION * width;
-  var planeHeight = IMAGE_SCREEN_FRACTION * height * aspectRatio; // multipled by aR to maintain proportions
+  var planeHeight = planeWidth * IMAGE_ASPECT_RATIO; // multipled by aR to maintain proportions
   var planeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight, 1, 1);
   var plane = new THREE.Mesh(planeGeometry, imageMaterial);
+  plane.position.y = (height - planeHeight) / 2; // Align to top
   scene.add(plane);
 
   // Init renderer
@@ -286,18 +288,31 @@ function init() {
   filmPass.uniforms.nIntensity.value = 1.25;
   filmPass.uniforms.grayscale.value = 0;
 
-  window.addEventListener(
-    'resize',
-    function onResize() {
-      var width = window.innerWidth;
-      var height = window.innerHeight;
+  function onResize() {
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var aR = w / h;
 
-      renderer.setSize(width, height);
-      // camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-    },
-    false
-  );
+    var scale = aR / aspectRatio;
+    var scaleX = width / w;
+    var scaleY = height / h;
+
+    // Maintain original aspect-ratio
+    plane.scale.y = scale;
+    // Align to top - WIP
+    // plane.position.y = (h - planeHeight) / 2;
+
+    renderer.setSize(w, h);
+    camera.updateProjectionMatrix();
+  }
+
+  var resizeTimeout = null;
+  function scheduleOnResize() {
+    window.clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(onResize, 20);
+  }
+
+  window.addEventListener('resize', scheduleOnResize, false);
 
   var shaderTime = 0;
   function animate() {
@@ -319,7 +334,6 @@ init();
 
 Remaining tasks:
   1. Resize or redraw plane when viewport resizes
-  2. Align plane to top of screen (or align camera to top of plane.)
 
 Extra:
   1. Debug why tree-shaking doesn't seem to work (and we hence serve a 540kB bundle...)
