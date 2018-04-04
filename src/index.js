@@ -288,6 +288,12 @@ function init() {
   filmPass.uniforms.nIntensity.value = 1.25;
   filmPass.uniforms.grayscale.value = 0;
 
+  if (process.env.NODE_ENV === 'development') {
+    window.plane = plane;
+    window.camera = camera;
+    window.scene = scene;
+  }
+
   function onResize() {
     var w = window.innerWidth;
     var h = window.innerHeight;
@@ -300,7 +306,18 @@ function init() {
     // Maintain original aspect-ratio
     plane.scale.y = scale;
     // Align to top - WIP
-    // plane.position.y = (h - planeHeight) / 2;
+    console.log(h, planeHeight, scale);
+    console.log(height);
+    plane.position.y = (h - planeHeight) / (100 * scale);
+
+    // Failed attempts:
+    // plane.position.y = scale * (h - planeHeight) / 2;
+    // plane.position.y = (h - (planeHeight * scale)) / 2;
+
+    // Decrease the scale -> plane needs to go up <=> plane.position.y needs to INCREASE
+    // Increase the scale -> plane needs to go down <=> plane.position.y needs to DECREASE
+    // (h - planeHeight) is negative => decrease in scale <=> decrease in pos z if factor
+    // planeHeight should probably be moidifed accoriding to the scale
 
     renderer.setSize(w, h);
     camera.updateProjectionMatrix();
