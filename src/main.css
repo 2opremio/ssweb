@@ -55,15 +55,17 @@ img {
  */
 
 html {
-  line-height: 1.15;
-  /* 1 */
-  -webkit-text-size-adjust: 100%;
-  /* 2 */
+  line-height: 1.15; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
   position: relative;
   line-height: 1.15;
   font-family: 'OmType', monospace;
   color: #fff;
 }
+
+/**
+ * Typography
+ * ====================================================== */
 
 body {
   background: #222;
@@ -86,35 +88,48 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 3.5em;
-  font-size: calc(2.25em + 1.75vw);
   margin-bottom: 0.25em;
 }
 
 h2 {
   margin-bottom: 1.75em;
   font-size: 2em;
-  font-size: calc(1.25em + 0.65vw);
-  font-style: normal;
+  font-weight: normal;
 }
 
 h3 {
   font-size: 2.25em;
-  font-size: calc(1.5em + 0.65vw);
 }
 
 h4 {
   font-size: 1.25em;
-  font-size: calc(0.875em + 0.35vw);
   margin-top: 2.5em;
   margin-bottom: 1.5em;
   text-transform: uppercase;
 }
 
-@media only screen and (max-width: 40em) {
+@media only screen and (max-width: 50em) {
+  h3 {
+    font-size: 2em;
+  }
   h4 {
-    margin-bottom: 1rem;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
   }
 }
+
+@media only screen and (max-width: 30em) {
+  h1 {
+    font-size: 2.5em;
+  }
+  h2, h3 {
+    font-size: 1.75em;
+  }
+}
+
+/**
+ * General Styles
+ * ====================================================== */
 
 .backdrop {
   position: fixed;
@@ -128,17 +143,120 @@ h4 {
 main {
   position: relative;
   z-index: 2;
-  max-width: 100%;
   width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-start;
+
   text-align: left;
-  min-height: 100vh;
-  padding: 5em;
-  padding-bottom: 2em;
+  padding: 2em 4%;
 }
+
+@media only screen and (max-width: 60em) and (max-height: 50em) {
+  main {
+    font-size: 0.875em;
+  }
+}
+
+@media only screen and (max-width: 50em) and (max-height: 40em) {
+  main {
+    font-size: 0.75em;
+  }
+}
+
+@media only screen and (max-width: 40em) {
+  main {
+    font-size: 0.675em;
+  }
+}
+
+@media only screen and (max-width: 30em) {
+  main {
+    padding: 1em;
+  }
+}
+
+
+
+/**
+ * Founder and avatar
+ * ====================================================== */
+
+.founder {
+  display: flex;
+}
+
+.avatar {
+  display: inline-block;
+  margin-left: 2em;
+  transition: transform 0.2s ease-in-out;
+}
+
+.avatar:hover {
+  transform: scale(1.1);
+}
+
+.avatar img {
+  height: 5em;
+  width: 5em;
+  border-radius: 2.5em;
+}
+
+@media only screen and (max-width: 40em) {
+  .avatar {
+    margin-left: 1em;
+  }
+
+  .avatar img {
+    height: 4em;
+    width: 4em;
+  }
+}
+
+
+
+
+/**
+ * Client Logos
+ * ====================================================== */
+
+.clients {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.client {
+  flex: 0 1 auto;
+  margin-right: 1.5em;
+  margin-bottom: 2em;
+}
+
+.client svg {
+  height: 2.75em;
+  width: auto;
+}
+
+@media only screen and (max-width: 50em) {
+  .client {
+    margin-right: 1em;
+    margin-bottom: 1.5em;
+  }
+
+  .client svg {
+    height: 2.25em;
+  }
+}
+
+
+
+/**
+ * Blinking Cursor
+ * ====================================================== */
 
 @keyframes fade-in {
   from { opacity: 0; }
@@ -157,47 +275,6 @@ main {
   animation: fade-in 1s ease alternate both infinite;
   border-radius: 1px;
 }
-
-.founder {
-  float: left;
-}
-
-.avatar {
-  float: right;
-  height: 100px;
-  width: 100px;
-  border-radius: 50%;
-}
-
-.clients {
-  display: flex;
-  align-items: stretch;
-  flex-wrap: wrap;
-}
-
-.client {
-  flex: 0 1 auto;
-  margin-right: 1.5em;
-  margin-bottom: 2rem;
-}
-
-.client svg {
-  height: 2.75em;
-  width: auto;
-}
-
-@media only screen and (max-width: 40em) {
-  .client {
-    margin-right: 1em;
-    margin-bottom: 1.5rem;
-  }
-
-  .client svg {
-    height: 2.75em;
-  }
-}
-
-
 
 
 
