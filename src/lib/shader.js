@@ -240,7 +240,7 @@ function init() {
   scene.background = new THREE.Color(BACKGROUND_COLOR);
 
   // Create material from image
-  var imageUrl = require('../res/grid.png');
+  var imageUrl = require('../res/logo-1024x1024.png');
   var imageTexture = new THREE.TextureLoader().load(imageUrl);
   var imageMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
   imageMaterial.transparent = true;
