@@ -1,4 +1,3 @@
-// @ts-check
 import './main.css';
 
 import * as THREE from 'three';
@@ -288,12 +287,6 @@ function init() {
   filmPass.uniforms.nIntensity.value = 1.25;
   filmPass.uniforms.grayscale.value = 0;
 
-  if (process.env.NODE_ENV === 'development') {
-    window.plane = plane;
-    window.camera = camera;
-    window.scene = scene;
-  }
-
   function onResize() {
     var w = window.innerWidth;
     var h = window.innerHeight;
@@ -303,22 +296,11 @@ function init() {
     var scaleX = width / w;
     var scaleY = height / h;
 
-    // Maintain original aspect-ratio
+    // Retain original aspect-ratio
     plane.scale.y = scale;
-    // Align to top - WIP
-    console.log(h, planeHeight, scale);
-    console.log(height);
-    plane.position.y = (h - planeHeight) / (100 * scale);
-
-    // Failed attempts:
-    // plane.position.y = scale * (h - planeHeight) / 2;
-    // plane.position.y = (h - (planeHeight * scale)) / 2;
-
-    // Decrease the scale -> plane needs to go up <=> plane.position.y needs to INCREASE
-    // Increase the scale -> plane needs to go down <=> plane.position.y needs to DECREASE
-    // (h - planeHeight) is negative => decrease in scale <=> decrease in pos z if factor
-    // planeHeight should probably be moidifed accoriding to the scale
-
+    // Retain the top-alignment when the scale and sizes are adjusted
+    plane.position.y = (h * scaleY - planeHeight * scale) / 2;
+    // Update the size of the canvas to fit the window size
     renderer.setSize(w, h);
     camera.updateProjectionMatrix();
   }
@@ -346,14 +328,3 @@ function init() {
 }
 
 init();
-
-/*
-
-Remaining tasks:
-  1. Resize or redraw plane when viewport resizes
-
-Extra:
-  1. Debug why tree-shaking doesn't seem to work (and we hence serve a 540kB bundle...)
-  2. Load JS async
-
-*/
