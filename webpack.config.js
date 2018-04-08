@@ -31,11 +31,13 @@ module.exports = {
         ],
       },
       {
-        test: /\.(otf|ttf|woff|woff2|png)$/,
+        test: /\.(otf|ttf|woff|woff2|png|svg)$/,
         use: [
           {
             loader: 'file-loader',
-            options: {},
+            options: {
+              name: '[name].[hash:10].[ext]',
+            },
           },
         ],
       },
@@ -43,7 +45,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: './src/index.html',
+      template: './src/index.html.ejs',
       filename: './index.html',
     }),
     new MiniCssExtractPlugin({
