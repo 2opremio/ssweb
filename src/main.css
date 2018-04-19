@@ -11,12 +11,12 @@
 }
 
 ::-moz-selection {
-  background-color: #09f;
+  background-color: #f0f;
   color: #fff;
 }
 
 ::selection {
-  background-color: #09f;
+  background-color: #f0f;
   color: #fff;
 }
 
@@ -49,18 +49,13 @@ img {
   padding: 0;
 }
 
-/**
- * 1. Correct the line height in all browsers.
- * 2. Prevent adjustments of font size after orientation changes in iOS.
- */
-
 html {
-  line-height: 1.15; /* 1 */
-  -webkit-text-size-adjust: 100%; /* 2 */
+  line-height: 1.5;
   position: relative;
-  line-height: 1.15;
   font-family: 'OmType', monospace;
   color: #fff;
+  /* Prevent adjustments of font size after orientation changes in iOS. */
+  -webkit-text-size-adjust: 100%;
 }
 
 /**
@@ -68,8 +63,9 @@ html {
  * ====================================================== */
 
 body {
-  background: #222;
-  color: #000;
+  background: #000;
+  color: #fff;
+  font-size: 2em;
 }
 
 a:active {
@@ -84,66 +80,22 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
   margin: 0;
   text-rendering: optimizeLegibility;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  font-size: 1em;
 }
 
-h1 {
-  font-size: 3.5em;
-  margin-bottom: 0.25em;
-}
-
-h2 {
-  margin-bottom: 1.75em;
-  font-size: 2em;
-  font-weight: normal;
-}
-
-h3 {
-  font-size: 2.25em;
-}
-
-h4 {
-  font-size: 1.25em;
-  margin-top: 2.5em;
-  margin-bottom: 1.5em;
-  text-transform: uppercase;
-}
-
-@media only screen and (max-width: 50em) {
-  h3 {
-    font-size: 2em;
-  }
-  h4 {
-    margin-top: 1.5em;
-    margin-bottom: 1em;
-  }
-}
-
-@media only screen and (max-width: 30em) {
-  h1 {
-    font-size: 2.5em;
-  }
-  h2, h3 {
-    font-size: 1.75em;
-  }
-}
 
 /**
  * General Styles
  * ====================================================== */
 
-.backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #222;
+.logo {
+  width: 4em;
+  height: auto;
+  margin-bottom: 1em;
 }
 
 main {
   position: relative;
-  z-index: 2;
   width: 100%;
   max-width: 100%;
   min-height: 100vh;
@@ -153,140 +105,23 @@ main {
   justify-content: flex-end;
   align-items: flex-start;
 
-  text-align: left;
-  padding: 2em 4%;
+  padding: 1.5em;
 }
 
-@media only screen and (max-width: 60em) and (max-height: 50em) {
-  main {
-    font-size: 0.875em;
-  }
+.no-list {
+  margin: 0;
+  padding: 0;
 }
 
-@media only screen and (max-width: 50em) and (max-height: 40em) {
-  main {
-    font-size: 0.75em;
-  }
+.no-list li {
+  list-style: none;
 }
-
-@media only screen and (max-width: 40em) {
-  main {
-    font-size: 0.675em;
-  }
-}
-
-@media only screen and (max-width: 30em) {
-  main {
-    padding: 1em;
-  }
-}
-
-
 
 /**
- * Founder and avatar
+ * Client-specific colors
  * ====================================================== */
 
-.founder {
-  display: flex;
-}
-
-.avatar {
-  display: inline-block;
-  margin-left: 2em;
-  transition: transform 0.2s ease-in-out;
-}
-
-.avatar:hover {
-  transform: scale(1.1);
-}
-
-.avatar img {
-  height: 5em;
-  width: 5em;
-  border-radius: 2.5em;
-}
-
-@media only screen and (max-width: 40em) {
-  .avatar {
-    margin-left: 1em;
-  }
-
-  .avatar img {
-    height: 4em;
-    width: 4em;
-  }
-}
-
-
-
-
-/**
- * Client Logos
- * ====================================================== */
-
-.clients {
-  display: flex;
-  align-items: stretch;
-  flex-wrap: wrap;
-}
-
-.client {
-  flex: 0 1 auto;
-  margin-right: 1.5em;
-  margin-bottom: 2em;
-}
-
-.client svg {
-  height: 2.75em;
-  width: auto;
-}
-
-@media only screen and (max-width: 50em) {
-  .client {
-    margin-right: 1em;
-    margin-bottom: 1.5em;
-  }
-
-  .client svg {
-    height: 2.25em;
-  }
-}
-
-
-
-/**
- * Blinking Cursor
- * ====================================================== */
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.with-blinking-cursor::after {
-  content: '';
-  display: inline-block;
-  vertical-align: bottom;
-  width: 0.6em;
-  width: 1ch;
-  height: 0.09em;
-  margin-left: 0.1em;
-  background: white;
-  animation: fade-in 1s ease alternate both infinite;
-  border-radius: 1px;
-}
-
-
-/**
- * Renderer target
- * ====================================================== */
-
-canvas {
-  top: 0;
-  left: 0;
-  position: absolute;
-
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out;
-}
+.color--spotify { color: #1fff23; }
+.color--weaveworks { color: #1f5bff; }
+.color--teenageengineering { color: rgb(255, 208, 0); }
+.color--certus { color: rgb(2, 90, 83); }

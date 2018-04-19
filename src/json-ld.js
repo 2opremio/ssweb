@@ -1,4 +1,4 @@
-import logoUrl from './res/logo.svg';
+import logoUrl from './logo.svg';
 
 /**
  * JSON for search-engines in a format known as "JSON+LD".
