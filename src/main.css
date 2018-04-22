@@ -99,13 +99,6 @@ h1, h2, h3, h4, h5, h6 {
   body { font-size: 2em; }
 }
 
-.email-link {
-  color: #f0f;
-}
-
-.email-link:hover span:nth-child(2n) {
-  color: white;
-}
 
 /**
  * General Styles
@@ -164,6 +157,10 @@ body {
   .spacer-group .spacer {
     padding-right: 1em;
   }
+}
+
+.color--pink {
+  color: #f0f;
 }
 
 /**
