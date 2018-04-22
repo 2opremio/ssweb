@@ -95,6 +95,13 @@ h1, h2, h3, h4, h5, h6 {
   body { font-size: 2em; }
 }
 
+.email-link {
+  text-decoration: underline;
+}
+
+.email-link:hover {
+  color: #f0f;
+}
 
 /**
  * General Styles
