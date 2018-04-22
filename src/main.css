@@ -159,7 +159,7 @@ body {
  * Client-specific colors
  * ====================================================== */
 
-.color--spotify { color: #1fff23; }
-.color--weaveworks { color: #1f5bff; }
-.color--teenageengineering { color: rgb(255, 208, 0); }
-.color--certus { color: rgb(2, 90, 83); }
+.color--spotify { color: #1db954; }
+.color--weaveworks { color: #00D2FF; }
+.color--teenageengineering { color: rgb(200, 150, 19); }
+.color--certus { color: #38978D; }
