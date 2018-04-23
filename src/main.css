@@ -105,15 +105,9 @@ h1, h2, h3, h4, h5, h6 {
  * ====================================================== */
 
 .logo {
+  width: 4em;
+  height: auto;
   margin-bottom: 1em;
-  line-height: 1;
-  user-select: none;
-}
-
-.logo span:first-child,
-.logo span:last-child {
-  position: relative;
-  top: -0.075em;
 }
 
 body {
