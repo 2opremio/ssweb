@@ -31,7 +31,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(otf|ttf|woff|woff2|png|svg)$/,
+        test: /\.(otf|ttf|woff|woff2|png|svg|ico)$/,
         use: [
           {
             loader: 'file-loader',
