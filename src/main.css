@@ -167,6 +167,10 @@ body {
  * Client-specific colors
  * ====================================================== */
 
+.color--agora { color: #22C55E; }
+.color--saga { color: #E84142; }
+.color--stellar { color: #7B61FF; }
+.color--neko { color: #C8FF00; }
 .color--spotify { color: #1db954; }
 .color--weaveworks { color: #00D2FF; }
 .color--teenageengineering { color: rgb(200, 150, 19); }
